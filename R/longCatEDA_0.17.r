@@ -1,40 +1,42 @@
 setClass('longCat',
-    representation(		data        = "matrix",
-                      data.sorted = "matrix",
-                      dim         = "integer",
-                      times       = "matrix",
-                      times.sorted= "matrix",
-                      labels      = "character",
-                      factors     = "numeric",
-                      IndTime     = "logical",
-                      nfactors    = "integer",
-                      sorted      = "logical",
-                      ascending	  = "logical",			   
-                      group       = "matrix",
-                      groupLabels = "character",
-                      order.data  = "matrix") 
+         representation(   data        = "matrix",
+                           data.sorted = "matrix",
+                           dim         = "integer",
+                           times       = "matrix",
+                           endt        = "matrix",
+                           times.sorted= "matrix",
+                           endt.sorted = "matrix",
+                           labels      = "character",
+                           factors     = "numeric",
+                           IndTime     = "logical",
+                           nfactors    = "integer",
+                           sorted      = "logical",
+                           ascending   = "logical",			   
+                           group       = "matrix",
+                           groupLabels = "character",
+                           order.data  = "matrix") 
 )
 setMethod("summary",
-    signature(object = "longCat"),
-    definition = function (object, ...) 
-    {
-      if( object$sorted) temp <- object[c(3,6:13)]
-      if(!object$sorted) temp <- object[c(3,6:10 )]
-      temp$group <- table(temp$group)
-      print(temp)
-    }
+          signature(object = "longCat"),
+          definition = function (object, ...) 
+          {
+            if( object$sorted) temp <- object[c(3,8:15)]
+            if(!object$sorted) temp <- object[c(3,8:12 )]
+            temp$group <- table(temp$group)
+            print(temp)
+          }
 )
 
 
-longContPlot <- function(y, times=NULL, ylim=NULL, xlim=NULL, ...)
+longContPlot <- function(y, times=NULL, jog=FALSE, ylim=NULL, xlim=NULL, ...)
 {
   # check the inputs and set graphing parameters
   if( is.null(ylim) ){ ylim=range(y, na.rm=T) }
   if( is.null(times) )
   { 
-      txx <- 1:ncol(y)
-      xlim=range(txx) 
-      times <- data.frame( matrix(txx, 1, ncol(y)) )
+    txx <- 1:ncol(y)
+    xlim=range(txx) 
+    times <- data.frame( matrix(txx, 1, ncol(y)) )
   }
   if( !is.null(times) & is.null(dim(times)) )
   { 
@@ -45,8 +47,14 @@ longContPlot <- function(y, times=NULL, ylim=NULL, xlim=NULL, ...)
   if( !is.null(times) & is.null(xlim) ){ xlim=range(times) }
   if(  is.null(times) & is.null(xlim) ){ xlim=c(1,ncol(y)) }
   
+  if(jog)
+  {
+    j <- matrix( runif(nrow(y), -.25, .25), nrow(y), ncol(y) )
+    y <- y + j 
+  }
+  
   # initiate a blank plot
-  plot( unlist(txx), unlist(y[1,]), col='white', ylim=ylim, xlim=xlim, type='n', ...)
+  plot( unlist(txx), unlist(y[1,]), col='transparent', ylim=ylim, xlim=xlim, type='n', ...)
   
   # loop through subjects adding them to the plot
   if( any( dim(y)!=dim(times) ) )
@@ -74,7 +82,7 @@ levelCheck <- function(y)
   maxlu <- max(lu)
   if( maxlu > 9 )
   {
-    stop('One or more variables in y has 10 or more categories')
+    warning('One or more variables in y has 10 or more categories.\nConsider using continuous methods\nsuch as longContPlot().')
   }
   # determine unique values
   factors <- as.numeric(levels(factor(unlist(y))))
@@ -88,7 +96,7 @@ dimCheck <- function(y, times)
   cy <- ncol(y)
   rt <- nrow(times)
   ct <- ncol(times)
-
+  
   if( rt>1 & rt!=ry ) stop(dimErr1) 
   if( cy!=ct ) stop(dimErr2)
   if( ry==rt & cy==ct )
@@ -102,10 +110,11 @@ dimCheck <- function(y, times)
   return(IndTime)
 }
 
-longCat <- function(y, times=NULL, Labels=NULL, tLabels=NULL, id=NULL)
+
+longCat <- function(y, times=NULL, Labels=NULL, tLabels=NULL, id=NULL, endt=NULL)
 {
-  # convert data frame to matrix
-  y <- as.matrix(y)
+  # convert data frame to matrix and character to numeric
+  y <- apply(y, 2, as.numeric)
   # check id
   if( !is.null(id) & nrow(y) != length(id) )
   {
@@ -134,12 +143,56 @@ longCat <- function(y, times=NULL, Labels=NULL, tLabels=NULL, id=NULL)
   factors <- levelCheck(y)
   
   # check the times input and force to data.frame
-  if( is.null(times)){ times <- data.frame( matrix(1:ncol(y), 1, ncol(y)) ) }
+  if( is.null(times) )
+  { 
+    times <- data.frame( matrix(1:ncol(y), 1, ncol(y)) ) 
+  }
   if(!is.null(times))
   { 
-    if( is.null(dim(times))) times <- data.frame( matrix(times, 1, ncol(y)) )
-    if(!is.null(dim(times))) times <- data.frame( times )  
+    # if times is a vector and endt is NULL
+    if( is.null(dim(times)) & is.null(endt) )
+    {
+      times <- data.frame( matrix(times, 1, ncol(y)) )
+    }
+    # if times is a matrix
+    if(!is.null(dim(times))) 
+    {
+      if( ncol(times) == ncol(y) & is.null(endt) )
+      {
+        times <- data.frame( times )
+      }
+      if( ncol(times) == (ncol(y)+1) & is.null(endt) )
+      {
+        endt  <- times[,ncol(times)]
+        times <- data.frame( times[,1:ncol(y)] )
+      }
+      if( ncol(times) == (ncol(y)+1) & !is.null(endt) & length(endt)==nrow(y) )
+      {
+        if( all( times[,ncol(times)]==endt ) )
+        {
+          endt  <- times[,ncol(times)]
+          times <- data.frame( times[,1:ncol(y)] )
+        }
+        if( all( times[,ncol(times)]==endt ) )
+        {
+          warning( paste("times has an extra column and endt is provided.\n",
+                         "Make sure this is intended.\n",
+                         "The last column of times is ignored.") )
+          times <- data.frame( times[,1:ncol(y)] )
+        }      
+      }
+    }
   }
+  if( !is.null(endt) & length(endt)==1 )
+  {
+    endt <- as.matrix( rep(endt, nrow(y) ) )
+  }
+  if( is.null(endt) )
+  {
+    avgt <- ( max(times, na.rm=T) - min(times, na.rm=T) ) / ncol(y)
+    endt <- as.matrix( rep(avgt, nrow(y) ) )
+  }
+  endt <- as.matrix( endt )
   
   # check the dimensions of the data (y) and the times input
   IndTime <- dimCheck(y, times)
@@ -154,33 +207,35 @@ longCat <- function(y, times=NULL, Labels=NULL, tLabels=NULL, id=NULL)
   if( length(Labels) != nfactors )
   {
     warning(paste('The number of labels in Labels does not equal the\n',
-     'number of unique values in the data set.'))
+                  'number of unique values in the data set.'))
   }
   if( !is.null(tLabels) & length(unique(times)) != length(tLabels)  )
   {
     warning(paste('The number of labels in tLabels does not equal the\n',
-      'number of unique values in times.'))
+                  'number of unique values in times.'))
   }
   
   # if individually varying times of observation, make sure times is a matrix
   if(!is.null(times) & IndTime) times <- as.matrix(times)
-
+  
   # apply class and return output
   lc =  list(data=y,
-        data.sorted=NULL,
-        dim=dim(y),
-        times=times,
-		    times.sorted=NULL,
-        labels=Labels,
-        tLabels=tLabels,
-        factors=factors,
-        IndTime=IndTime,
-        nfactors=nfactors,
-        sorted=FALSE,
-        ascending = NULL,					   
-        group = NULL,
-        groupLabels = NULL,
-        order.data = order.data)
+             data.sorted=NULL,
+             dim=dim(y),
+             times=times,
+             endt=endt,
+             times.sorted=NULL,
+             endt.sorted=NULL,
+             labels=Labels,
+             tLabels=tLabels,
+             factors=factors,
+             IndTime=IndTime,
+             nfactors=nfactors,
+             sorted=FALSE,
+             ascending = NULL,					   
+             group = NULL,
+             groupLabels = NULL,
+             order.data = order.data)
   class(lc) = 'longCat'
   return(lc) 
 }
@@ -226,7 +281,7 @@ makePatterns <- function(dat, times=NULL, num=TRUE, mindur=NULL, igrpt=FALSE)
   as.matrix(out, nrow(dat), 1)
 }
 sorter <- function(lc, ascending=TRUE, whichColumns=NULL, num=TRUE, mindur=NULL, 
-             igrpt=FALSE, customSort=NULL, initFirst=FALSE, group=NULL, groupLabels=NULL, ggap=10)
+                   igrpt=FALSE, customSort=NULL, initFirst=FALSE, group=NULL, groupLabels=NULL, ggap=10)
 {
   # if object is already sorted, don't attempt to resort
   if(lc$sorted)
@@ -236,7 +291,7 @@ sorter <- function(lc, ascending=TRUE, whichColumns=NULL, num=TRUE, mindur=NULL,
                       'lc_sort1 <- sorter(lc, group=g1)\n',
                       'lc_sort2 <- sorter(lc, group=g2)\n',
                       'lc_customSort <- sorter(lc, customSort=cs)\n'
-                      )
+    )
     stop(sortWarn)    
   }
   
@@ -271,12 +326,19 @@ sorter <- function(lc, ascending=TRUE, whichColumns=NULL, num=TRUE, mindur=NULL,
       customSort <- customSort[nag]
       group <- group[nag]
       w <- paste(ndeleted, 
-                 ' row(s) with missing membership on group variable\n',
-                 ' have been deleted\n', sep='')
+                 ' row(s) with missing membership on the group variable\n',
+                 'have been deleted.\n\n', 
+                 'If a large number of cases have missing data on the\n',
+                 'group variable, consider recoding the missings into\n',
+                 'their own group, e.g.:\n\n',
+                 '     group[is.na(group)] <- -999 \n\n',
+                 'and add a missing label to groupLabels, e.g.:\n\n',
+                 "     groupLabels=c('Missing', 'Group1', 'Group2', 'Etc.')\n",
+                 sep='')
       warning(w)
     }
   }
-
+  
   # check inputs and set additional sorting parameters
   if(is.null(whichColumns)) whichColumns = 1:ncol(lc$data)
   if( lc$IndTime) pats <- makePatterns(lc$data[,whichColumns], lc$times[,whichColumns], num, mindur, igrpt)
@@ -304,9 +366,10 @@ sorter <- function(lc, ascending=TRUE, whichColumns=NULL, num=TRUE, mindur=NULL,
   data.sorted <- lc$data[o,]
   group <- group[o]
   if(lc$IndTime) times.sorted <- lc$times[o,]
+  endt.sorted <- lc$endt[o]
   lc$order.data[,2] <- o
   lc$order.data[,3] <- pats
-
+  
   # check grouping parameters
   if( !is.null(group) )
   {
@@ -320,7 +383,7 @@ sorter <- function(lc, ascending=TRUE, whichColumns=NULL, num=TRUE, mindur=NULL,
     if( length( u ) != length(groupLabels) )
     {
       stop(paste('The number of labels in groupLabels does not equal the\n',
-        'number of unique values in the variable group.'))
+                 'number of unique values in the variable group.'))
     }
   }
   # if grouping/stratification is present, augment the data with empty rows
@@ -330,6 +393,7 @@ sorter <- function(lc, ascending=TRUE, whichColumns=NULL, num=TRUE, mindur=NULL,
     temp <- vector('list', length(u) )
     gtemp <- vector('list', length(u) )
     ttemp <- vector('list', length(u) )
+    etemp <- vector('list', length(u) )
     blines <- matrix(NA, ggap, ncol(data.sorted))
     glines <- blines[,1]
     for(i in 1:length(u))
@@ -340,6 +404,7 @@ sorter <- function(lc, ascending=TRUE, whichColumns=NULL, num=TRUE, mindur=NULL,
       if(lc$IndTime)
       {
         tdat <- times.sorted[group==u[i],]
+        edat <- endt.sorted[group==u[i]]
         pats <- makePatterns(gdat[,whichColumns], tdat[,whichColumns], num, mindur)
         tpat <- do.call(order, data.frame(tdat) )
         o    <- order(pats, tpat, decreasing = !ascending)
@@ -348,33 +413,37 @@ sorter <- function(lc, ascending=TRUE, whichColumns=NULL, num=TRUE, mindur=NULL,
       gtemp[[i]] <- as.matrix(c(glines, group[group==u[i]]))
       if(lc$IndTime) 
       {
-        ttemp[[i]] <- rbind(blines, tdat[o,]  )
+        ttemp[[i]] <- rbind(blines    , tdat[o,] )
+        etemp[[i]] <-     c(blines[,1], edat[o ] )
       }
     }
     data.sorted <- do.call(rbind, temp); rm(temp)
     group <- do.call(rbind, gtemp); rm(gtemp)
     if(lc$IndTime){ times.sorted <- do.call(rbind, ttemp); rm(ttemp) }
+    endt.sorted <- unlist(etemp); rm(etemp)
   }                                          
   
   # assign NULL if not previously assigned
   if(!lc$IndTime) times.sorted = NULL
-
+  
   # return modified lc object
   lc = list( data = lc$data,
-        data.sorted = data.sorted,
-        dim = lc$dim,
-        times = lc$times,
-		    times.sorted = times.sorted,
-        labels = lc$labels,
-        tLabels = lc$tLabels,
-        factors = lc$factors,
-        IndTime = lc$IndTime,
-        nfactors = lc$nfactors,
-        sorted = TRUE,
-        ascending = ascending,			   
-        group = group,
-        groupLabels = groupLabels, 
-        order.data = lc$order.data)
+             data.sorted = data.sorted,
+             dim = lc$dim,
+             times = lc$times,
+             endt = lc$endt,
+             times.sorted = times.sorted,
+             endt.sorted = endt.sorted,
+             labels = lc$labels,
+             tLabels = lc$tLabels,
+             factors = lc$factors,
+             IndTime = lc$IndTime,
+             nfactors = lc$nfactors,
+             sorted = TRUE,
+             ascending = ascending,			   
+             group = group,
+             groupLabels = groupLabels, 
+             order.data = lc$order.data)
   class(lc) = 'longCat'
   return(lc)        
 }
@@ -382,90 +451,33 @@ sorter <- function(lc, ascending=TRUE, whichColumns=NULL, num=TRUE, mindur=NULL,
 
 colChoose <- function(colScheme, nfactors, reverse=FALSE)
 {
-	if(colScheme==0) cols <- c(1:8, 'darkgreen')
-  if(colScheme==1){
-	cols <- c("darkred",
-			  "darkorange",
-			  "darkgoldenrod2",
-			  "darkgreen",
-			  "lightblue",
-			  "darkblue",
-			  "blueviolet",
-			  "black",
-			  "hotpink")}
-	if(colScheme==2){
-	cols <- c("orange4",
-			  "orange",
-			  "olivedrab",
-			  "olivedrab1",
-			  "mediumorchid4",
-			  "mediumorchid1",
-			  "royalblue4",
-			  "royalblue1",
-			  "black")}
-	if(colScheme==3){
-	cols <- c("forestgreen",
-			  "green",
-			  "deeppink4",
-			  "hotpink1",
-			  "chocolate4",
-			  "darkorange",
-			  "red4",
-			  "orangered",
-			  "black")}
-  if(colScheme=='gray'){cols <- gray(8:0/9)}
-  if(colScheme=='oldheat'){
-  cols <- c("purple4",
-        "royalblue",
-        "paleturquoise3",
-        "palegreen",
-        "yellow",
-        "orange",
-        "orangered",
-        "maroon",
-        "red4")
-  }
-  if(colScheme=='coldheat'){
-  cols <- c("blue4",
-        "dodgerblue2",
-        "green4",
-        "darkseagreen3",
-        "yellow4",
-        "tan1",
-        "orange",
-        "orangered",
-        "red2")
-  }
-  if(colScheme=='rainbow'){cols <- rainbow(9)}
-  if(colScheme=='heat'){cols <- heat.colors(9, alpha = 1)[9:1]}
-  if(colScheme=='terrain'){cols <- terrain.colors(9, alpha = 1)}
-  if(colScheme=='topo'){cols <- topo.colors(9, alpha = 1)}
-  if(colScheme=='cm'){cols <- cm.colors(9, alpha = 1)}
-             
+  if(colScheme=='gray'){cols <- gray((nfactors-1):0/nfactors)}
+  if(colScheme=='rainbow'){cols <- rainbow(nfactors)}
+  if(colScheme=='heat'){cols <- heat.colors(nfactors, alpha = 1)[nfactors:1]}
+  if(colScheme=='terrain'){cols <- terrain.colors(nfactors, alpha = 1)}
+  if(colScheme=='topo'){cols <- topo.colors(nfactors, alpha = 1)}
+  if(colScheme=='cm'){cols <- cm.colors(nfactors, alpha = 1)}  
   # some finessing to make sure contrast is sufficient when nFactors < 9
-  if(reverse) cols <- cols[9:1]
-  if( colScheme > 0 )
-  {
-    if(nfactors <= 5 & nfactors > 3) cols <- cols[c(1,3,5,7,9)]
-    if(nfactors <= 3) cols <- cols[c(1,5,9)]
-  }
-	return(cols)
+  if(reverse) cols <- cols[nfactors:1]
+  return(cols)
 }
 
-longCatPlot <- function(lc, xlab="Day",
-                ylab="Each Line Represents a Participant", cols=NULL,
-                colScheme='heat', reverse=FALSE, lwd=.5, lcex=1, llwd=3, 
-                legendBuffer=.12, groupBuffer=.1, groupRotation=90, gcex=1, 
-                bg='cornsilk3', seg.len=1, xlas=0, xcex=1, ...)
+longCatPlot <- function(lc, xlab="Days",
+                        ylab=NULL, cols=NULL,
+                        colScheme='heat', reverse=FALSE, lwd=.5, lcex=1, llwd=3, 
+                        legendBuffer=.12, groupBuffer=0, groupRotation=90, gcex=1, 
+                        seg.len=1, xlas=0, xcex=1, ...)
 {
   if( is(lc) != 'longCat' ){ stop('longCatPlot requires an object of class longCat.')  }
   if(is.null(cols)){ cols <- colChoose(colScheme, lc$nfactors, reverse) }
   if(legendBuffer < 0 | legendBuffer > 1){stop('legendBuffer must be in [0,1]')}
   if(groupBuffer < 0 | groupBuffer > 1){stop('groupBuffer must be in [0,1]')}
+  if(is.null(ylab)) ylab = paste("Each Line Represents a Participant, N =", lc$dim[1])
   
   # on the fly sorting
-  if( !lc$sorted ) lc <- sorter(lc)
-
+  if( !lc$sorted & ( any(is.na(lc$data)) |  lc$IndTime) ) lc <- sorter(lc, num=TRUE)
+  if( !lc$sorted &  !any(is.na(lc$data)) & !lc$IndTime  ) lc <- sorter(lc, num=FALSE)
+  
   # set up plot, pre-allocating a region for labels using ymax
   lo = min(lc$times, na.rm=T)
   up = max(lc$times, na.rm=T)
@@ -478,59 +490,56 @@ longCatPlot <- function(lc, xlab="Day",
   if( reps < 0 ) reps <- 0
   
   # set additional plotting parameters
-  xbuffer <- .5*mean(xrange[2:length(xrange)]-xrange[1:(length(xrange)-1)])
-  groupBuffer. <- ceiling( groupBuffer*up )
+  xbuffer <- .25*mean(xrange[2:length(xrange)]-xrange[1:(length(xrange)-1)])
+  groupBuffer <- ceiling( groupBuffer*up )
   tx <- c(lo-.5, xrange, rep( lo, reps), up+.5 )
-  if( !is.null(lc$group) ){ tx[1] <- tx[1] - groupBuffer.*xbuffer }
+  if( !is.null(lc$group) ){ tx[1] <- tx[1] - groupBuffer*xbuffer }
   ymax <- nrow(lc$data.sorted) + ceiling( legendBuffer*nrow(lc$data.sorted) )
   
-  # set background color
-  par(bg=bg)
-  
   # initiate the empty plot
-  plot(tx,y=rep(NA,length(tx)),col='white',ylim=c(0,ymax), 
-        xlab=xlab,ylab=ylab, axes=FALSE, ...)
-
+  plot(tx,y=rep(NA,length(tx)),col='transparent',ylim=c(0,ymax), 
+       xlab=xlab, ylab='', axes=FALSE, ...)
+  if(groupBuffer >0 | !is.null(lc$group)) title(ylab=ylab, mgp=c(1   ,1,0))
+  if(groupBuffer==0 &  is.null(lc$group)) title(ylab=ylab, mgp=c(0.25,1,0))  
+  
   # add axes
   if(!is.null(lc$tLabels)) axis( 1, at = unique(lc$times), 
                                  labels=lc$tLabels, las=xlas, cex.axis=xcex )
   if( is.null(lc$tLabels)) axis( 1, at = NULL )
-
+  
   # plot loops
   for(r in 1:nrow(lc$data.sorted)) # loop over cases
   {
     # select plotting data for the r^th case
     pdat <- lc$data.sorted[r,]
     if( lc$IndTime & !lc$sorted) txx <- lc$times[r,]
-	  if( lc$IndTime &  lc$sorted) txx <- lc$times.sorted[r,]
+    if( lc$IndTime &  lc$sorted) txx <- lc$times.sorted[r,]
     if(!lc$IndTime) txx <- lc$times
     tempy <- rep(r,2)
     for(j in 1:length(pdat)) # loop over observations
     {
-       if( !is.na( pdat[j] ) ) # if observation is NA, skip
-       {
-         # define the x-values for any but the last segment
-         if( j <length(pdat) )
-         { 
-           tempx <- c(txx[j]-xbuffer, txx[j+1]-xbuffer)
-           # correct for missing endpoint
-           if(is.na(txx[j+1])) tempx[2] <- txx[j]+xbuffer 
-         }
-         # define the x-values for the last segment
-         if( j==length(pdat) ){ tempx <- c(txx[j]-xbuffer, txx[j]+xbuffer) }
-         # horizontal line plot
-         lines(tempx, tempy, lwd=lwd, col=cols[ unlist(pdat[j]) ] )
-       }
+      if( !is.na( pdat[j] ) ) # if observation is NA, skip
+      {
+        # define the x-values for any but the last segment
+        if( j <length(pdat) )
+        { 
+          tempx <- c(txx[j], txx[j+1])
+          # correct for missing endpoint
+          if(is.na(txx[j+1])) tempx[2] <- txx[j]+xbuffer 
+        }
+        # define the x-values for the last segment
+        if( j==length(pdat) ){ tempx <- c(txx[j], txx[j]+lc$endt[j]) }
+        # horizontal line plot
+        lines(tempx, tempy, lwd=lwd, col=cols[ unlist(pdat[j]) ] )
+      }
     }
   }
-
-  # add legend
-  legMax <- max(lc$times, na.rm=T)-(max(lc$times, na.rm=T)-min(lc$times, na.rm=T))/lc$nfactors
-  legPoints <- seq(from=min(lc$times, na.rm=T), to=legMax, length.out=lc$nfactors)
-  for(l in 1:length(legPoints))
+  
+  # add legend at top 
+  if(legendBuffer > 0)
   {
-    legend(legPoints[l], ymax, legend=lc$labels[l], lty=1,
-           cex=lcex, col=cols[l], bty='n', lwd=llwd, seg.len=seg.len)
+    legend(min(lc$times, na.rm=T), ymax + .1, legend=lc$labels, lty=1,
+           cex=lcex, col=cols, bty='n', lwd=llwd, seg.len=seg.len, horiz=T)  
   }
   
   # if there is grouping add group labels
@@ -544,7 +553,6 @@ longCatPlot <- function(lc, xlab="Day",
       text(tx[1], gag[i,2], labels = lc$groupLabels[i], srt=groupRotation, cex=gcex)
     }
   }
-  # reset par
-  par(bg='white')
+  # return colors
+  invisible(cols)
 }
-

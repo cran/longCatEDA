@@ -25,7 +25,7 @@ logical - should sorting be done ascending. Default is \code{TRUE}.
 a numeric list indicating which columns in \code{lc$data} should be used for sorting (.e.g., \code{c(1, 5, 7)}). Useful if, for example, an intervention occurs after data collection has started, and the user is not interested in sorting on pre-intervention observations.
 }
   \item{num}{
-see \code{\link{makePatterns}}.
+see \code{\link{makePatterns}} for details.
 }
   \item{mindur}{
 see \code{\link{makePatterns}}.
@@ -36,7 +36,7 @@ a vector of the same length as the number of rows in \code{lc$data} providing a 
 }
   \item{initFirst}{if \code{customSort} is not \code{NULL}, setting \code{initFirst=TRUE} will sort on initial values prior to the custom sorting variable.}
   \item{group}{
-a vector of the same length as the number of rows in \code{lc$data} indicating group membership. Default is \code{NULL}. If \code{group} is \code{NA}, corresponding rows in \code{lc$data} will be deleted prior to completing the sorting, and a warning indicating this has been done is printed to the console. 
+a vector of the same length as the number of rows in \code{lc$data} indicating group membership. Default is \code{NULL}. If \code{group} is \code{NA}, corresponding rows in \code{lc$data} will be deleted prior to completing the sorting, and a warning indicating this has been done is printed to the console. If a large number of cases have missing data on the grouping variable, consider recoding the missings into their own group, e.g., \code{group[is.na(group)] <- -999} and add a missing label to \code{groupLabels}, e.g. \code{groupLabels=c('Missing', 'Group1', 'Group2', 'Etc.')}.
 }
   \item{groupLabels}{
 a vector of numeric or character labels of the same length as the number of unique values in \code{group}. Default is \code{NULL}. If \code{group} is not \code{NULL} and \code{groupLabels} is not provided, then the numeric values in \code{group} are used as the labels.
@@ -60,12 +60,22 @@ Stephen Tueller
 \code{\link{longCat}} and \code{\link{longCatPlot}}.
 }
 \examples{
-# sort with a grouping variable and plot
-par(mfrow=c(1,1), bg='lightblue')
+# create a plot like that in Figure 3 from Tueller, Van Dorn, & Bobashev (2013)
+par(mfrow=c(1,2), bg='cornsilk3')
 times <- c(1,100,200,300,400,500)
-grouplc <- longCat(example3, times)
+f3lc <- longCat(example3, times); f3lc$sorted <- TRUE; f3lc$data.sorted <- f3lc$data
+longCatPlot(f3lc, main='Unsorted', colScheme='heat', lwd=2)
+f3lc <- longCat(example3, times)
+longCatPlot(f3lc, main='Sorted', colScheme='heat', lwd=2)
+
+# sort with a grouping variable and plot
+par(mfrow=c(1,1), bg='cornsilk3', mar=c(5.1, 4.1, 4.1, 8.1), xpd=TRUE)
+times <- c(1,100,200,300,400,500)
+lc <- longCat(example3, times)
 group <- sample(1:3, nrow(example3), replace=TRUE)
-grouplc <- sorter(grouplc, group=group)
-longCatPlot(grouplc, main='Grouped Data', colScheme='heat', lwd=2)
-par(mfrow=c(1,1), bg='white')
+grouplc <- sorter(lc, group=group)
+cols <- longCatPlot(grouplc, groupBuffer=.15, main='Grouped Data', colScheme='heat', 
+                    lwd=2, legendBuffer=0)
+legend(600, 130, legend=1:5, col=cols, lty=1, lwd=2)
+par(bg='transparent', mar = c(5, 4, 4, 2) + 0.1, xpd=FALSE)
 }

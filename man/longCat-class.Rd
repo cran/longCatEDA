@@ -1,5 +1,5 @@
 \name{longCat-class}
-\Rdversion{0.16}
+\Rdversion{0.17}
 \docType{class}
 \alias{longCat-class}
 
@@ -17,7 +17,9 @@ Objects can be created by calls of the form \code{new("longCat", ...)}.
     \item{\code{data.sorted}:}{Object of class \code{"matrix"} ~~ }
     \item{\code{dim}:}{Object of class \code{"integer"} ~~ }
     \item{\code{times}:}{Object of class \code{"matrix"} ~~ }
+	\item{\code{endt}:}{Object of class \code{"matrix"} ~~ }
     \item{\code{times.sorted}:}{Object of class \code{"matrix"} ~~ }
+	\item{\code{endt.sorted}:}{Object of class \code{"matrix"} ~~ }
     \item{\code{labels}:}{Object of class \code{"character"} ~~ }
     \item{\code{factors}:}{Object of class \code{"numeric"} ~~ }
     \item{\code{IndTime}:}{Object of class \code{"logical"} ~~ }

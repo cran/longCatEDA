@@ -12,8 +12,8 @@ Package to implement horizontal line plots for categorical (ordinal or nominal) 
 \tabular{ll}{
 Package: \tab longCatEDA\cr
 Type: \tab Package\cr
-Version: \tab 0.16\cr
-Date: \tab 2012-11-05\cr
+Version: \tab 0.17\cr
+Date: \tab 29Oct2013\cr
 License: \tab GNU GPL\cr
 Depends: \tab methods\cr
 }
@@ -24,8 +24,10 @@ Stephen Tueller
 
 Maintainer: Stephen Tueller <stueller@rti.org>
 }
-\references{Tueller, S. J. (2011). Visualization of Categorical Longitudinal and Times Series Data. Manuscript Under Review.}
+\references{Tueller, S. J. (2013). Visualization of Categorical Longitudinal and Times Series Data. Manuscript Under Review.}
 \keyword{ package }
 \examples{
+par(bg='cornsilk3')
 longCatPlot( longCat( example3 ) )
+par(bg='transparent')
 }

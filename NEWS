@@ -1,3 +1,13 @@
+Changes in Version 0.17
+	* Added options for handling the legend outside the margins and suppressing the legend above the plot
+	* Added handling for factor input (which is converted to numeric integers)
+	* Default y-axis label moved closer to the plot unless there is grouping
+	* Default for groupBuffer in longCatPlot changed to 0
+	* Changed default handling of y-axis label to include sample size
+	* Removed restriction to 9 categories (a warning is issued)
+	* Added options for controlling the length of terminal line segments with the 'endt' option of the longCat() function. This also allows for individually varying times of observations with known end times (i.e., the times matrix has one more column than the data matrix, see 'endt').
+	* Expanded the examples to illustrate the use of the RColorBrewer and colorSpace packages (these are shown in the documentation but not run when using example(colChoose))
+
 Changes in Version 0.16
 	* Corrected a bug in missing data handling for the group variable in version 0.13
 	* Added error message for attempts to sort a sorted lc object; a code example is printed for correct approach to multiple sorts
@@ -16,6 +26,6 @@ Changes in Version 0.13
 	* Added utility for saving sorting order and ID variables
 
 Changes in Version 0.12
-	* Removed restrictions to 9 categories (not released, changes not perpetuated in version .13)
+	* Removed restriction to 9 categories (not released, changes not perpetuated in version .13)
 	
 Original Version 0.11

@@ -1,4 +1,7 @@
 exportPattern("^[[:alpha:]]+")
+import(
+	methods
+)
 exportMethods(
     "summary" 
 )

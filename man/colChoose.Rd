@@ -15,13 +15,7 @@ colChoose(colScheme, nfactors, reverse = FALSE)
   \item{colScheme}{
 can be one of
        \itemize{
-		\item 0 = 1:8 + 'darkgreen' (9==1, so you can't use 1:9)
-		\item 1 = roygbiv
-		\item 2 = orange to blue
-		\item 3 = green to red
-		\item 'gray' = a spectrum of greys
-		\item 'oldheat' = a manual heat map spectrum
-		\item 'coldheat' = a manual heat map starting with cold colors
+		\item 'gray' = a grayscale spectrum
 		\item 'rainbow' see \code{\link{rainbow}}
 		\item 'heat' see \code{\link{heat.colors}}
 		\item 'terrain' see \code{\link{terrain.colors}}
@@ -48,22 +42,10 @@ Tueller, S. J., Van Dorn, R. A., and Bobashev, G. V.  (2013). Visualization of C
 }
 \examples{
 # color examples
-par(mfrow=c(3,4), bg='wheat')
+par(mfrow=c(2,3), bg='wheat')
 times <- c(1,100,200,300,400,500)
 f3lc <- longCat( example3, times, Labels=rep('',5) )
-longCatPlot(f3lc, main='colScheme=0', colScheme=0, 
-  lwd=.1, ylab='', legendBuffer = .25)
-longCatPlot(f3lc, main='colScheme=1', colScheme=1, 
-  lwd=.1, ylab='', legendBuffer = .25)
-longCatPlot(f3lc, main='colScheme=2', colScheme=2, 
-  lwd=.1, ylab='', legendBuffer = .25)
-longCatPlot(f3lc, main='colScheme=3', colScheme=3, 
-  lwd=.1, ylab='', legendBuffer = .25)
 longCatPlot(f3lc, main='colScheme=gray', colScheme='gray', 
-  lwd=.1, ylab='', legendBuffer = .25)
-longCatPlot(f3lc, main='colScheme=oldheat', colScheme='oldheat', 
-  lwd=.1, ylab='', legendBuffer = .25)
-longCatPlot(f3lc, main='colScheme=coldheat', colScheme='coldheat', 
   lwd=.1, ylab='', legendBuffer = .25)
 longCatPlot(f3lc, main='colScheme=rainbow', colScheme='rainbow', 
   lwd=.1, ylab='', legendBuffer = .25)
@@ -75,5 +57,41 @@ longCatPlot(f3lc, main='colScheme=topo', colScheme='topo',
   lwd=.1, ylab='', legendBuffer = .25)
 longCatPlot(f3lc, main='colScheme=cm', colScheme='cm', 
   lwd=.1, ylab='', legendBuffer = .25)
-par(mfrow=c(1,1), bg='white')
+par(mfrow=c(1,1), bg='transparent')
+
+\dontrun{
+# illustrate the use of colors from the package RColorBrewer
+library(RColorBrewer)
+par(mfrow=c(2,3), bg='cornsilk3')
+longCatPlot(f3lc, main='RColorBrewer: Blues', cols=brewer.pal(f3lc$nfactors, "Blues"), 
+            lwd=.1, ylab='', legendBuffer = .25)
+longCatPlot(f3lc, main='RColorBrewer: Greens', cols=brewer.pal(f3lc$nfactors, "Greens"), 
+            lwd=.1, ylab='', legendBuffer = .25)
+longCatPlot(f3lc, main='RColorBrewer: PuBuGn', cols=brewer.pal(f3lc$nfactors, "PuBuGn"), 
+            lwd=.1, ylab='', legendBuffer = .25)
+longCatPlot(f3lc, main='RColorBrewer: YlOrRd', cols=brewer.pal(f3lc$nfactors, "YlOrRd"), 
+            lwd=.1, ylab='', legendBuffer = .25)
+longCatPlot(f3lc, main='RColorBrewer: Spectral', cols=brewer.pal(f3lc$nfactors, "Spectral"), 
+            lwd=.1, ylab='', legendBuffer = .25)
+longCatPlot(f3lc, main='RColorBrewer: Accent', cols=brewer.pal(f3lc$nfactors, "Accent"), 
+            lwd=.1, ylab='', legendBuffer = .25)
+par(mfrow=c(1,1), bg='transparent')
+
+# illustrate the use of colors from the package colorspace
+library(colorspace)
+par(mfrow=c(2,3), bg='cornsilk3')
+longCatPlot(f3lc, main='colorspace: rainbow_hcl', cols=rainbow_hcl(f3lc$nfactors), 
+            lwd=.1, ylab='', legendBuffer = .25)
+longCatPlot(f3lc, main='colorspace: sequential_hcl', cols=sequential_hcl(f3lc$nfactors), 
+            lwd=.1, ylab='', legendBuffer = .25)
+longCatPlot(f3lc, main='colorspace: heat_hcl', cols=heat_hcl(f3lc$nfactors), 
+            lwd=.1, ylab='', legendBuffer = .25)
+longCatPlot(f3lc, main='colorspace: terrain_hcl', cols=terrain_hcl(f3lc$nfactors), 
+            lwd=.1, ylab='', legendBuffer = .25)
+longCatPlot(f3lc, main='colorspace: diverge_hcl', cols=diverge_hcl(f3lc$nfactors), 
+            lwd=.1, ylab='', legendBuffer = .25)
+longCatPlot(f3lc, main='colorspace: diverge_hsv', cols=diverge_hsv(f3lc$nfactors), 
+            lwd=.1, ylab='', legendBuffer = .25)
+par(mfrow=c(1,1), bg='transparent')
+}
 }
