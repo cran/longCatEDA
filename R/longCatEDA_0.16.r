@@ -228,17 +228,52 @@ makePatterns <- function(dat, times=NULL, num=TRUE, mindur=NULL, igrpt=FALSE)
 sorter <- function(lc, ascending=TRUE, whichColumns=NULL, num=TRUE, mindur=NULL, 
              igrpt=FALSE, customSort=NULL, initFirst=FALSE, group=NULL, groupLabels=NULL, ggap=10)
 {
+  # if object is already sorted, don't attempt to resort
+  if(lc$sorted)
+  {
+    sortWarn <- paste('lc object already sorted, use the following approach\n',
+                      'lc <- (y)\n',
+                      'lc_sort1 <- sorter(lc, group=g1)\n',
+                      'lc_sort2 <- sorter(lc, group=g2)\n',
+                      'lc_customSort <- sorter(lc, customSort=cs)\n'
+                      )
+    stop(sortWarn)    
+  }
+  
+  # if customSort contains missing data, stop
+  if( !is.null(customSort) )
+  {
+    if( any(is.na(customSort)) )
+    {
+      stp <- paste('\ncustomSort cannot contain missing values \n',
+                   'consider trying one of:\n',
+                   '1. Subsetting the data first\n',
+                   '2. Setting missing to an extreme value and adding a group variable, such as\n',
+                   '     lc <- longCat(y)\n',
+                   '     customSort[is.na(customSort)] <- -99\n',
+                   '     group <- customSort==-99\n',
+                   "     lc_customSort <- sorter(lc, group=group, \n",
+                   "          groupLabels=c('nonMissing customSort', 'Missing customSort'),\n",
+                   "          customSort=customSort\n")
+      stop(stp)
+    }  
+  }
   # check for missing values on the grouping variable
   if( !is.null(group) )
   {
     if( any(is.na(group)) ) 
     {
-      lc$data <- lc$data[!is.na(group),]
-      group <- group[!is.na(group)]
-      w <- paste('WARNING: rOWS in ', quote(lc),
-                 '$data with missing membership on group variable ', quote(group), 
+      ndeleted <- sum(is.na(group))
+      nag <- !is.na(group)
+      lc$data <- lc$data[nag,]
+      lc$order.data <- lc$order.data[nag,]
+      if(lc$IndTime) lc$times <-  lc$times[nag,]
+      customSort <- customSort[nag]
+      group <- group[nag]
+      w <- paste(ndeleted, 
+                 ' row(s) with missing membership on group variable\n',
                  ' have been deleted\n', sep='')
-      cat(rep('*',40),'\n',w,rep('*',40),'\n')
+      warning(w)
     }
   }
 

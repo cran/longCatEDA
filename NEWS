@@ -1,0 +1,21 @@
+Changes in Version 0.16
+	* Corrected a bug in missing data handling for the group variable in version 0.13
+	* Added error message for attempts to sort a sorted lc object; a code example is printed for correct approach to multiple sorts
+	* Added error message for missing values on customSort input to sorter()
+	* Added funder information to author field in DESCRIPTION file
+	* Added a not run example for longCatPlot showing how to speed up plot production for larger data sets
+
+Changes in Version 0.15
+	* Explores automatic selection of lwd, with the option to weight lwd via the sampling weights
+	* Results: the minimum lwd is too small to make this useful, V.15 not published, branch from .13 to .16
+
+Changes in Version 0.14
+	* Explores the use of seriation package instead of or with sorter(); seriation is far too slow, v0.14 will not be released, revert to 0.13 and jump to 0.15.
+
+Changes in Version 0.13
+	* Added utility for saving sorting order and ID variables
+
+Changes in Version 0.12
+	* Removed restrictions to 9 categories (not released, changes not perpetuated in version .13)
+	
+Original Version 0.11

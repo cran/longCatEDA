@@ -51,17 +51,29 @@ Tueller, S. J., Van Dorn, R. A., and Bobashev, G. V.  (2013). Visualization of C
 par(mfrow=c(3,4), bg='wheat')
 times <- c(1,100,200,300,400,500)
 f3lc <- longCat( example3, times, Labels=rep('',5) )
-longCatPlot(f3lc, main='colScheme=0', colScheme=0, lwd=.1, ylab='', legendBuffer = .25)
-longCatPlot(f3lc, main='colScheme=1', colScheme=1, lwd=.1, ylab='', legendBuffer = .25)
-longCatPlot(f3lc, main='colScheme=2', colScheme=2, lwd=.1, ylab='', legendBuffer = .25)
-longCatPlot(f3lc, main='colScheme=3', colScheme=3, lwd=.1, ylab='', legendBuffer = .25)
-longCatPlot(f3lc, main='colScheme=gray', colScheme='gray', lwd=.1, ylab='', legendBuffer = .25)
-longCatPlot(f3lc, main='colScheme=oldheat', colScheme='oldheat', lwd=.1, ylab='', legendBuffer = .25)
-longCatPlot(f3lc, main='colScheme=coldheat', colScheme='coldheat', lwd=.1, ylab='', legendBuffer = .25)
-longCatPlot(f3lc, main='colScheme=rainbow', colScheme='rainbow', lwd=.1, ylab='', legendBuffer = .25)
-longCatPlot(f3lc, main='colScheme=heat', colScheme='heat', lwd=.1, ylab='', legendBuffer = .25)
-longCatPlot(f3lc, main='colScheme=terrain', colScheme='terrain', lwd=.1, ylab='', legendBuffer = .25)
-longCatPlot(f3lc, main='colScheme=topo', colScheme='topo', lwd=.1, ylab='', legendBuffer = .25)
-longCatPlot(f3lc, main='colScheme=cm', colScheme='cm', lwd=.1, ylab='', legendBuffer = .25)
+longCatPlot(f3lc, main='colScheme=0', colScheme=0, 
+  lwd=.1, ylab='', legendBuffer = .25)
+longCatPlot(f3lc, main='colScheme=1', colScheme=1, 
+  lwd=.1, ylab='', legendBuffer = .25)
+longCatPlot(f3lc, main='colScheme=2', colScheme=2, 
+  lwd=.1, ylab='', legendBuffer = .25)
+longCatPlot(f3lc, main='colScheme=3', colScheme=3, 
+  lwd=.1, ylab='', legendBuffer = .25)
+longCatPlot(f3lc, main='colScheme=gray', colScheme='gray', 
+  lwd=.1, ylab='', legendBuffer = .25)
+longCatPlot(f3lc, main='colScheme=oldheat', colScheme='oldheat', 
+  lwd=.1, ylab='', legendBuffer = .25)
+longCatPlot(f3lc, main='colScheme=coldheat', colScheme='coldheat', 
+  lwd=.1, ylab='', legendBuffer = .25)
+longCatPlot(f3lc, main='colScheme=rainbow', colScheme='rainbow', 
+  lwd=.1, ylab='', legendBuffer = .25)
+longCatPlot(f3lc, main='colScheme=heat', colScheme='heat', 
+  lwd=.1, ylab='', legendBuffer = .25)
+longCatPlot(f3lc, main='colScheme=terrain', colScheme='terrain', 
+  lwd=.1, ylab='', legendBuffer = .25)
+longCatPlot(f3lc, main='colScheme=topo', colScheme='topo', 
+  lwd=.1, ylab='', legendBuffer = .25)
+longCatPlot(f3lc, main='colScheme=cm', colScheme='cm', 
+  lwd=.1, ylab='', legendBuffer = .25)
 par(mfrow=c(1,1), bg='white')
 }

@@ -5,7 +5,7 @@
 Plotting of lc objects
 }
 \description{
-Function to plot \code{longCat} objects created by \code{\link{longCat}}.
+Function to plot \code{longCat} objects created by \code{\link{longCat}}. Note that depending on your 
 }
 \usage{
 longCatPlot(lc, xlab = "Day", ylab = "Each Line Represents a Participant", 
@@ -71,12 +71,20 @@ Tueller, S. J., Van Dorn, R. A., and Bobashev, G. V.  (2013). Visualization of C
 \code{\link{longCat}}.
 }
 \examples{
-# create Figure 3 from Tueller (2011)
-par(mfrow=c(1,2), bg='lightblue')
+# create a plot like that in Figure 3 from Tueller, Van Dorn, & Bobashev (2013)
+\dontshow{par(mfrow=c(1,2), bg='lightblue')}
 times <- c(1,100,200,300,400,500)
 f3lc <- longCat(example3, times); f3lc$sorted <- TRUE; f3lc$data.sorted <- f3lc$data
 longCatPlot(f3lc, main='Unsorted', colScheme='heat', lwd=2)
 f3lc <- longCat(example3, times)
 longCatPlot(f3lc, main='Sorted', colScheme='heat', lwd=2)
-par(mfrow=c(1,1), bg='white')
+\dontshow{par(mfrow=c(1,1), bg='white')}
+\dontrun{
+# for data sets with many rows, writing directly to a file 
+# is much faster and unaffected by device resizing, see ?pdf
+pdf('C:/mydir/mysubdir/myfile.pdf')
+longCatPolt(f3lc, main='Sorted', colScheme='heat', lwd=2))
+dev.off()
+# see ?jpeg for picture file options
+}
 }
