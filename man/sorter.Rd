@@ -66,6 +66,6 @@ times <- c(1,100,200,300,400,500)
 grouplc <- longCat(example3, times)
 group <- sample(1:3, nrow(example3), replace=TRUE)
 grouplc <- sorter(grouplc, group=group)
-longCatPlot(grouplc, main='Grouped Data', colScheme='heat', lwd=2, groupBuffer=2)
+longCatPlot(grouplc, main='Grouped Data', colScheme='heat', lwd=2)
 par(mfrow=c(1,1), bg='white')
 }

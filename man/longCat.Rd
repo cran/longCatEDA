@@ -4,7 +4,7 @@
 \title{Creation of Objects of Class longCat}
 \description{Function to create objects of class \code{longCat}.}
 \usage{
-longCat(y, times = NULL, Labels = NULL, tLabels = NULL)
+longCat(y, times = NULL, Labels = NULL, tLabels = NULL, id = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -12,6 +12,7 @@ longCat(y, times = NULL, Labels = NULL, tLabels = NULL)
   \item{times}{time points used for the x-axis in plotting. Either a vector of the same length as the number of columns in \code{y} (i.e., all cases have the same times of observation), or a matrix of the same dimension as \code{y} (i.e., individually varying times of observation). Default is \code{NULL} and is assigned the value 1:\code{ncol(y)}.}  
   \item{Labels}{a vector of numeric or character labels for the response options in \code{y}. Must be the same length as the number of unique non-missing values in \code{y}. Default is \code{NULL} and is assigned the values \code{1:max(unique(y))}.}
   \item{tLabels}{numeric or character labels for the time points in \code{times}. Default is \code{NULL} and is assigned the values \code{1:ncol(y)}.}
+  \item{id}{A optional variable identifying or naming the rows of \code{y}. Returned as the first column of the matrix \code{order.data} (see \code{order.data} in the value section below).}
 }
 \value{
 \code{longCat} returns an object of class \code{longCat} which is a list containing at least the following components:
@@ -29,7 +30,7 @@ longCat(y, times = NULL, Labels = NULL, tLabels = NULL)
   \item{ascending }{logical indicator. If \code{sorted} is \code{TRUE}, this will indicate whether sorting was done ascending. (default is \code{NULL} unless \code{\link{sorter}} has been applied to the \code{longCat} object).}
   \item{group }{a vector of the same length as the number of rows in \code{data} (default is \code{NULL} unless \code{\link{sorter}} has been applied to the \code{longCat} object along with a grouping variable).}
   \item{groupLabels }{a optional vector of character or numeric labels for the \code{group} variable (see \code{\link{sorter}}).}
-
+  \item{order.data}{A matrix with identification (see input \code{id} above) and sorting information. Rows of the matrix correspond to rows of \code{y} and the columns are \code{id}, and order variable, and a variable representing the unique data patterns in \code{y}. The former is returned only if \code{id} is provided to \code{longCat}. The latter two are only returned by {\link{sorter}}. If only unique data patterns are desired, use \code{\link{makePatterns}}; see \code{example(makePatterns)}.}
 %% ...
 }
 \references{
@@ -46,7 +47,7 @@ f2lc <- longCat(example2cat, times)
 # see the object
 summary(f2lc)
 # plot the continuous and categogorical versions of this data
-par(mfrow=c(1,2), bg='lightblue')
+par(mfrow=c(1,2), bg='antiquewhite3')
 longContPlot(example2cat, times, ylim=c(1,5), main='A', ylab='', xlab='Day')
 longCatPlot(f2lc, lwd=4, main='B', colScheme='heat')
 par(mfrow=c(1,1), bg='white')

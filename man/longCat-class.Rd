@@ -1,5 +1,5 @@
 \name{longCat-class}
-\Rdversion{0.11}
+\Rdversion{0.13}
 \docType{class}
 \alias{longCat-class}
 
@@ -26,6 +26,7 @@ Objects can be created by calls of the form \code{new("longCat", ...)}.
     \item{\code{ascending}:}{Object of class \code{"logical"} ~~ }
     \item{\code{group}:}{Object of class \code{"matrix"} ~~ }
     \item{\code{groupLabels}:}{Object of class \code{"character"} ~~ }
+    \item{\code{order.data}:}{Object of class \code{"matrix"} ~~ }
   }
 }
 \section{Methods}{

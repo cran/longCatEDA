@@ -10,9 +10,9 @@ Function to plot \code{longCat} objects created by \code{\link{longCat}}.
 \usage{
 longCatPlot(lc, xlab = "Day", ylab = "Each Line Represents a Participant", 
                 cols = NULL, colScheme = "heat", reverse = FALSE, 
-                lwd = 0.5, lcex = 1, llwd = 1.5, legendBuffer = 0.1, 
-                groupBuffer = 0.25, groupRotation = 90, gcex = 1, 
-                bg = "antiquewhite3", seg.len = 1,
+                lwd = 0.5, lcex = 1, llwd = 3, legendBuffer = 0.12, 
+                groupBuffer = 0.1, groupRotation = 90, gcex = 1, 
+                bg = "cornsilk3", seg.len = 1,
                 xlas = 0, xcex = 1, ...)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -42,20 +42,20 @@ set the width of horizontal lines. Default is .5. \code{lwd} should be reduced p
 character expansion factor for the legend text. Default is 1. See \code{\link{par}}.
 }
   \item{llwd}{
-set the width of lines in the legend. default is 1.5. See \code{lwd}.
+set the width of lines in the legend. default is 3. See \code{lwd}.
 }
   \item{legendBuffer}{
-set proportion of the plot to retain for legends, must be in [0,1]. Note that the legend is very sensitive to the scaling of the graphics device. Users are advised to maximize their device and rerun, or call \code{dev.new()} and resize prior to running \code{longCatPlot}. Default is .1 (i.e., 10% of the plot area retained for the legend).
+set proportion of the plot to retain for legends, must be in [0,1]. Note that the legend is very sensitive to the scaling of the graphics device. Users are advised to maximize their device and rerun, or call \code{dev.new()} and resize prior to running \code{longCatPlot}. Default is .12 (i.e., 12\% of the vertical plot area is retained for the legend).
 }
   \item{groupBuffer}{
-similar to legendBuffer, but for group labels on the left side of the plot. Default is .25. Can take on any value greater than or equal to 0.
+similar to legendBuffer, but for group labels on the left side of the plot. Default is .1 (i.e., 10\% of the horizontal plot area is retained for group labels). Can take on any value in [0,1]. 
 }
   \item{groupRotation}{
 if \code{lc$groupLabels} are long (see \code{\link{longCat}}), rotation of the labels can be used reduce the needed size of \code{groupBuffer}.
 }
   \item{gcex}{character expansion factor for group labels. Default is 1. See\code{\link{par}}.
 }
-  \item{bg}{a background color for plots. Default is \code{'antiquewhite3'}. See \code{bg} in \code{\link{par}}.}
+  \item{bg}{a background color for plots. Default is \code{'cornsilk3'}. See \code{bg} in \code{\link{par}}.}
   \item{seg.len}{Length of lines in the upper legend. Default is 1. See \code{\link{legend}}.}
   \item{xlas}{see \code{las} in \code{\link{par}}. Applied to the x-axis when \code{tLabels} are provided to \code{\link{longCat}}.}
   \item{xcex}{see \code{axis.cex} in \code{\link{par}} and  \code{\link{axis}}. Applied to the x-axis when \code{tLabels} are provided to \code{\link{longCat}}.}

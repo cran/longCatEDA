@@ -11,7 +11,8 @@ setClass('longCat',
                       sorted      = "logical",
                       ascending	  = "logical",			   
                       group       = "matrix",
-                      groupLabels = "character" ) 
+                      groupLabels = "character",
+                      order.data  = "matrix") 
 )
 setMethod("summary",
     signature(object = "longCat"),
@@ -101,10 +102,18 @@ dimCheck <- function(y, times)
   return(IndTime)
 }
 
-longCat <- function(y, times=NULL, Labels=NULL, tLabels=NULL)
+longCat <- function(y, times=NULL, Labels=NULL, tLabels=NULL, id=NULL)
 {
   # convert data frame to matrix
   y <- as.matrix(y)
+  # check id
+  if( !is.null(id) & nrow(y) != length(id) )
+  {
+    stop('The number of IDs length(id) does not match the number of rows in y nrow(y)')
+  }
+  # create the order.data matrix
+  order.data <- matrix(NA, nrow(y), 3)
+  if( !is.null(id) ) order.data[,1] <- id
   # rescale inputs to positive sequential integers from 1 to the maximum 
   # number of categories
   u <- unique(c(y))
@@ -170,7 +179,8 @@ longCat <- function(y, times=NULL, Labels=NULL, tLabels=NULL)
         sorted=FALSE,
         ascending = NULL,					   
         group = NULL,
-        groupLabels = NULL)
+        groupLabels = NULL,
+        order.data = order.data)
   class(lc) = 'longCat'
   return(lc) 
 }
@@ -189,9 +199,11 @@ norpt <- function( alist = c(1,2,2,3,3,3,4,4,4,4,5) )
   outlist <- c(outlist, rep(NA, (length(alist)-length(outlist))))
   outlist
 }
-makePatterns <- function(dat, times, num=TRUE, mindur=NULL, igrpt=FALSE)
+makePatterns <- function(dat, times=NULL, num=TRUE, mindur=NULL, igrpt=FALSE)
 {
-  # first, reduce the effect of short durations
+  # set times if null
+  if( is.null(times) ) times <- 1:ncol(dat)
+  # reduce the effect of short durations
   if(!is.null(mindur) & length(dim(times))==2)
   {
     times <- times - times[,1]
@@ -229,7 +241,7 @@ sorter <- function(lc, ascending=TRUE, whichColumns=NULL, num=TRUE, mindur=NULL,
       cat(rep('*',40),'\n',w,rep('*',40),'\n')
     }
   }
-  
+
   # check inputs and set additional sorting parameters
   if(is.null(whichColumns)) whichColumns = 1:ncol(lc$data)
   if( lc$IndTime) pats <- makePatterns(lc$data[,whichColumns], lc$times[,whichColumns], num, mindur, igrpt)
@@ -257,6 +269,8 @@ sorter <- function(lc, ascending=TRUE, whichColumns=NULL, num=TRUE, mindur=NULL,
   data.sorted <- lc$data[o,]
   group <- group[o]
   if(lc$IndTime) times.sorted <- lc$times[o,]
+  lc$order.data[,2] <- o
+  lc$order.data[,3] <- pats
 
   # check grouping parameters
   if( !is.null(group) )
@@ -324,7 +338,8 @@ sorter <- function(lc, ascending=TRUE, whichColumns=NULL, num=TRUE, mindur=NULL,
         sorted = TRUE,
         ascending = ascending,			   
         group = group,
-        groupLabels = groupLabels )
+        groupLabels = groupLabels, 
+        order.data = lc$order.data)
   class(lc) = 'longCat'
   return(lc)        
 }
@@ -363,7 +378,7 @@ colChoose <- function(colScheme, nfactors, reverse=FALSE)
 			  "red4",
 			  "orangered",
 			  "black")}
-  if(colScheme=='gray'){cols <- gray(seq(0,.9,len=nfactors))}
+  if(colScheme=='gray'){cols <- gray(8:0/9)}
   if(colScheme=='oldheat'){
   cols <- c("purple4",
         "royalblue",
@@ -404,14 +419,15 @@ colChoose <- function(colScheme, nfactors, reverse=FALSE)
 
 longCatPlot <- function(lc, xlab="Day",
                 ylab="Each Line Represents a Participant", cols=NULL,
-                colScheme='heat', reverse=FALSE, lwd=.5, lcex=1, llwd=1.5, 
-                legendBuffer=.1, groupBuffer=.25, groupRotation=90, gcex=1, 
-                bg='antiquewhite3', seg.len=1, xlas=0, xcex=1, ...)
+                colScheme='heat', reverse=FALSE, lwd=.5, lcex=1, llwd=3, 
+                legendBuffer=.12, groupBuffer=.1, groupRotation=90, gcex=1, 
+                bg='cornsilk3', seg.len=1, xlas=0, xcex=1, ...)
 {
   if( is(lc) != 'longCat' ){ stop('longCatPlot requires an object of class longCat.')  }
   if(is.null(cols)){ cols <- colChoose(colScheme, lc$nfactors, reverse) }
   if(legendBuffer < 0 | legendBuffer > 1){stop('legendBuffer must be in [0,1]')}
-
+  if(groupBuffer < 0 | groupBuffer > 1){stop('groupBuffer must be in [0,1]')}
+  
   # on the fly sorting
   if( !lc$sorted ) lc <- sorter(lc)
 
@@ -428,8 +444,9 @@ longCatPlot <- function(lc, xlab="Day",
   
   # set additional plotting parameters
   xbuffer <- .5*mean(xrange[2:length(xrange)]-xrange[1:(length(xrange)-1)])
+  groupBuffer. <- ceiling( groupBuffer*up )
   tx <- c(lo-.5, xrange, rep( lo, reps), up+.5 )
-  if( !is.null(lc$group) ){ tx[1] <- tx[1] - groupBuffer*xbuffer }
+  if( !is.null(lc$group) ){ tx[1] <- tx[1] - groupBuffer.*xbuffer }
   ymax <- nrow(lc$data.sorted) + ceiling( legendBuffer*nrow(lc$data.sorted) )
   
   # set background color
