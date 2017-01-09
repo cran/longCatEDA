@@ -7,11 +7,16 @@ Plotting of lc objects
 \description{
 Function to plot \code{longCat} objects created by \code{\link{longCat}}.  
 }
-\usage{
-longCatPlot(lc, xlab = "Days", ylab = NULL, cols = NULL, colScheme = "heat", 
-			reverse = FALSE, lwd = 0.5, lcex = 1, llwd = 3, 
-			legendBuffer = 0.12, groupBuffer = 0, groupRotation = 90, 
-			gcex = 1, seg.len = 1, xlas = 0, xcex = 1, ...)
+\usage{longCatPlot(lc, xlab = "Days", 
+  ylab = NULL, cols = NULL, 
+  colScheme = "heat", reverse = FALSE, lwd = 0.5, lcex = 1, llwd = 3, 
+  legendBuffer = 0.12, groupBuffer = 0, groupRotation = 90, gcex = 1, 
+  seg.len = 1, xlas = 0, xcex = 1, ecex = .5, event.col=1, 
+  plot.events=TRUE, which.events=NULL, 
+  n.events=NULL, event.pch=NULL, 
+  texclude=NULL, sort=TRUE,
+  which.state=NULL, nth.state=NULL, not.state=FALSE,
+  which.event=NULL, nth.event=NULL, not.event=FALSE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -31,10 +36,10 @@ a numeric or character list of colors. See \code{\link{par}}. Default is \code{N
 select a color scheme. See \code{\link{colChoose}} for available options.
 }
   \item{reverse}{
-color schemes are applied from the lowest to highest level of categorical data in \code{lc$data} or \code{lc$data.sorted}. Set \code{reverse=TRUE} to reverse this. Default is \code{FALSE}.
+color schemes are applied from the lowest to highest level of categorical data in \code{lc$y} or \code{lc$y.sorted}. Set \code{reverse=TRUE} to reverse this. Default is \code{FALSE}.
 }
   \item{lwd}{
-set the width of horizontal lines. Default is .5. \code{lwd} should be reduced proportionally to the number of rows in \code{lc$data} to avoid overlap in plotting. 
+set the width of horizontal lines. Default is .5. \code{lwd} should be reduced proportionally to the number of rows in \code{lc$y} to avoid overlap in plotting. 
 }
   \item{lcex}{
 character expansion factor for the legend text. Default is 1. See \code{\link{par}}.
@@ -49,19 +54,33 @@ set proportion of the plot to retain for legends, must be in [0,1]. Note that th
 similar to legendBuffer, but for group labels on the left side of the plot. Default is 0 (i.e., 0\% of the horizontal plot area is retained for group labels). Can take on any value in [0,1]. 
 }
   \item{groupRotation}{
-if \code{lc$groupLabels} are long (see \code{\link{longCat}}), rotation of the labels can be used reduce the needed size of \code{groupBuffer}.
+if \code{lc$groupLabels} are long (see \code{\link{longCat}}), rotation of the labels can be used reduce the needed size of \code{groupBuffer}. The value is in degrees ranging from -360 to +360.
 }
   \item{gcex}{character expansion factor for group labels. Default is 1. See\code{\link{par}}.
 }
   \item{seg.len}{Length of lines in the upper legend. Default is 1. See \code{\link{legend}}.}
   \item{xlas}{see \code{las} in \code{\link{par}}. Applied to the x-axis when \code{tLabels} are provided to \code{\link{longCat}}.}
   \item{xcex}{see \code{axis.cex} in \code{\link{par}} and  \code{\link{axis}}. Applied to the x-axis when \code{tLabels} are provided to \code{\link{longCat}}.}
+  \item{ecex}{see \code{cex} in \code{\link{points}}. This is used to size the points used to plot event points if \code{events} is not \code{NULL}.}
+  \item{event.col}{color for ploting event indicators.}
+  \item{plot.events}{logical - should events be plotted?}
+  \item{which.events}{numeric vector - which events should be plotted? For example, if the events have values \code{c(1,2,3,4,5)}, you can specify that only \code{which.events=c(2,5)} be plotted.}
+  \item{n.events}{how many events should be plotted, e.g., \code{n.events=3} plots the first three events for each participant.}
+  \item{event.pch}{what plotting characters should be used. See \code{\link{points}}.}
+  \item{texclude}{a vector of length 2 indicating the range of \code{times} and \code{event.times} to be plotted, e.g., \code{texclude=c(10,20)} will plot data for time points 10 and larger up to and including 20.}
+  \item{sort}{logical - should \code{longCatPlot} sort the data on the fly using intelligent defaults? If data are already sorted via \code{sorter}, this will be ignored.}
+  \item{which.state }{see \code{\link{alignTime}}.}
+  \item{nth.state   }{see \code{\link{alignTime}}.}
+  \item{not.state   }{see \code{\link{alignTime}}.}
+  \item{which.event }{see \code{\link{alignTime}}.}
+  \item{nth.event   }{see \code{\link{alignTime}}.}
+  \item{not.event   }{see \code{\link{alignTime}}.}
   \item{\dots}{
 Arguments to be passed to \code{\link{plot}} (see \code{\link{par}}).
 }
 }
 \references{
-Tueller, S. J., Van Dorn, R. A., and Bobashev, G. V. (2013). Visualization of Categorical Longitudinal and Times Series Data. Manuscript Under Review.}
+Tueller, S. J., Van Dorn, R. A., & Bobashev, G. V. (2016). Visualization of categorical longitudinal and times series data (Report No. MR-0033-1602). Research Triangle Park, NC: RTI Press. http://www.rti.org/publication/visualization-categorical-longitudinal-and-times-series-data}
 \author{Stephen Tueller}
 
 \seealso{

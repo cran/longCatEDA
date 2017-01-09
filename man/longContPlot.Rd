@@ -29,7 +29,7 @@ Arguments to be passed to \code{\link{plot}}. See \code{\link{par}}.
 }
 
 \references{
-Tueller, S. J., Van Dorn, R. A., and Bobashev, G. V.  (2013). Visualization of Categorical Longitudinal and Times Series Data. Manuscript Under Review.}
+Tueller, S. J., Van Dorn, R. A., & Bobashev, G. V. (2016). Visualization of categorical longitudinal and times series data (Report No. MR-0033-1602). Research Triangle Park, NC: RTI Press. http://www.rti.org/publication/visualization-categorical-longitudinal-and-times-series-data}
 \author{Stephen Tueller}
 
 \seealso{

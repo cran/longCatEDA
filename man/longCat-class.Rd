@@ -1,5 +1,5 @@
 \name{longCat-class}
-\Rdversion{0.17}
+\Rdversion{0.21}
 \docType{class}
 \alias{longCat-class}
 
@@ -13,22 +13,27 @@ Objects can be created by calls of the form \code{new("longCat", ...)}.
 }
 \section{Slots}{
   \describe{
-    \item{\code{data}:}{Object of class \code{"matrix"} ~~ }
-    \item{\code{data.sorted}:}{Object of class \code{"matrix"} ~~ }
+    \item{\code{y}:}{Object of class \code{"matrix"} ~~ }
+    \item{\code{y.sorted}:}{Object of class \code{"matrix"} ~~ }
     \item{\code{dim}:}{Object of class \code{"integer"} ~~ }
     \item{\code{times}:}{Object of class \code{"matrix"} ~~ }
-	\item{\code{endt}:}{Object of class \code{"matrix"} ~~ }
     \item{\code{times.sorted}:}{Object of class \code{"matrix"} ~~ }
-	\item{\code{endt.sorted}:}{Object of class \code{"matrix"} ~~ }
-    \item{\code{labels}:}{Object of class \code{"character"} ~~ }
+    \item{\code{Labels}:}{Object of class \code{"character"} ~~ }
     \item{\code{factors}:}{Object of class \code{"numeric"} ~~ }
     \item{\code{IndTime}:}{Object of class \code{"logical"} ~~ }
     \item{\code{nfactors}:}{Object of class \code{"integer"} ~~ }
     \item{\code{sorted}:}{Object of class \code{"logical"} ~~ }
     \item{\code{ascending}:}{Object of class \code{"logical"} ~~ }
     \item{\code{group}:}{Object of class \code{"matrix"} ~~ }
+    \item{\code{group.sorted}:}{Object of class \code{"matrix"} ~~ }
     \item{\code{groupLabels}:}{Object of class \code{"character"} ~~ }
-    \item{\code{order.data}:}{Object of class \code{"matrix"} ~~ }
+    \item{\code{order.y}:}{Object of class \code{"matrix"} ~~ }
+    \item{\code{order.y.sorted}:}{Object of class \code{"matrix"} ~~ }
+    \item{\code{events}:}{Object of class \code{"matrix"} ~~ }
+    \item{\code{event.times}:}{Object of class \code{"matrix"} ~~ }
+    \item{\code{events.sorted}:}{Object of class \code{"matrix"} ~~ }
+    \item{\code{event.times.sorted}:}{Object of class \code{"matrix"} ~~ }
+    \item{\code{eventLables}:}{Object of class \code{"character"} ~~ }
   }
 }
 \section{Methods}{
@@ -37,7 +42,7 @@ Objects can be created by calls of the form \code{new("longCat", ...)}.
 	 }
 }
 \references{
-Tueller, S. J., Van Dorn, R. A., and Bobashev, G. V.  (2013). Visualization of Categorical Longitudinal and Times Series Data. Manuscript Under Review.}
+Tueller, S. J., Van Dorn, R. A., & Bobashev, G. V. (2016). Visualization of categorical longitudinal and times series data (Report No. MR-0033-1602). Research Triangle Park, NC: RTI Press. http://www.rti.org/publication/visualization-categorical-longitudinal-and-times-series-data}
 \examples{
 showClass("longCat")
 }

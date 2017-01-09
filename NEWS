@@ -1,3 +1,11 @@
+Changes in Version 0.21
+	* Added function alignTime() to create new 'times' matrices aligned at the n^th state in 'y' or the n^th event in 'events'
+	* sorter() rewritten for more efficient handling of grouped data
+	
+Changes in Version 0.20
+	* Added options to superimpose 'events' over top of states that occur at 'event.times'
+	* Simplified the options for the 'times' variable, depricating the endt option
+
 Changes in Version 0.17
 	* Added options for handling the legend outside the margins and suppressing the legend above the plot
 	* Added handling for factor input (which is converted to numeric integers)

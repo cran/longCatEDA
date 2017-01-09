@@ -8,3 +8,8 @@ exportMethods(
 exportClasses(
     "longCat" 
 )
+importFrom("grDevices", "cm.colors", "gray", "heat.colors", "rainbow",
+           "terrain.colors", "topo.colors")
+importFrom("graphics", "axis", "legend", "lines", "plot", "points",
+           "text", "title")
+importFrom("stats", "aggregate", "runif", "var")

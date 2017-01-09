@@ -8,6 +8,6 @@ Simulated data for illustrating \code{\link{longCat}} and \code{\link{longCatPlo
 \usage{example3}
 \format{Data frame with 100 subjects and 6 time points}
 \references{
-Tueller, S. J., {van Dorn}, R., and Bobashev, G., (2013). Visualization of Categorical Longitudinal and Times Series Data.
+Tueller, S. J., Van Dorn, R. A., & Bobashev, G. V. (2016). Visualization of categorical longitudinal and times series data (Report No. MR-0033-1602). Research Triangle Park, NC: RTI Press.
 }
 \keyword{datasets}
