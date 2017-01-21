@@ -223,9 +223,14 @@ longCat <- function(y, times=NULL, Labels=NULL, tLabels=NULL,
                     event.times=NULL, eventLabels=NULL)
 {
   # convert y frame to matrix and character to numeric
-  y <- apply(y, 2, as.numeric)
+  if(is.factor(y[,1]))
+  {
+    if(is.null(Labels)) Labels <- levels(unlist(c(y))) 
+  }
+  y <- data.matrix(y)
 
-  # check the times input and force to data.frame
+  # check the times input, that it is monotonically increasing, and force to data.frame
+  IndTime <- NULL
   if( is.null(times) )
   { 
     IndTime <- FALSE
@@ -238,14 +243,19 @@ longCat <- function(y, times=NULL, Labels=NULL, tLabels=NULL,
     {
       IndTime <- FALSE
       if(length(times)!=(ncol(y)+1)) stop('times must be of length ncol(y)+1')
+      if(!all(times==cummax(times))) stop('times must be monotonically increasing')
       times <- data.frame( matrix(times, nrow(y), (1+ncol(y)), byrow=TRUE) )
     }
     # if times is a matrix
     dimCheck <- nrow(y)==nrow(times) & ncol(times)==(ncol(y)+1)
     if(dimCheck) 
     {
-      IndTime <- TRUE
+      if(is.null(IndTime)) IndTime <- TRUE 
       times <- as.matrix(times)
+      if(!all( apply(times, 1, function(x) all(x==cummax(x))) ))
+      {
+        stop('times must be monotonically increasing')
+      }
     }
     if(!dimCheck)
     {
@@ -297,14 +307,14 @@ longCat <- function(y, times=NULL, Labels=NULL, tLabels=NULL,
     warning(paste('The number of labels in Labels does not equal the\n',
                   'number of unique values in the y set.'))
   }
-  if( !is.null(tLabels) & length(unique(times)) != length(tLabels)  )
+  if( !is.null(tLabels) & ncol(y) != length(tLabels) )
   {
     warning(paste('The number of labels in tLabels does not equal the\n',
                   'number of unique values in times.'))
   }
   
   # if individually varying times of observation are given, make tLabels NULL
-  if(!is.null(tLabels) & IndTime) tLabels <- NULL
+  if( (length(unique(times))-1) != ncol(y) ) tLabels <- NULL
   
   # if events are provided, event times must also be provided
   if(!is.null(events))
@@ -437,6 +447,7 @@ sort1  <- function(id1, y1, times1, events1, event.times1, group1,
               group.s       = group.s))
   
 }
+
 sorter <- function(lc, ascending=TRUE, whichColumns=NULL, num=TRUE, mindur=NULL, 
                    igrpt=FALSE, customSort=NULL, initFirst=FALSE, group=NULL, 
                    groupLabels=NULL, ggap=NULL)
@@ -445,6 +456,14 @@ sorter <- function(lc, ascending=TRUE, whichColumns=NULL, num=TRUE, mindur=NULL,
   if( !is.null(ggap) )
   {
     if(ggap<0 | ggap>1) stop("ggap must be in [0,1]")
+  }
+  
+  # make group numeric, extracting labels first if not given
+  if(is.character(group)) group <- as.factor(group)
+  if(is.factor(group))
+  {
+    if(is.null(groupLabels)) groupLabels <- levels(group)
+    group <- as.numeric(group)
   }
   
   # if object is already sorted, don't attempt to resort
@@ -556,10 +575,25 @@ sorter <- function(lc, ascending=TRUE, whichColumns=NULL, num=TRUE, mindur=NULL,
   	# add empty lines if ngroups > 1
   	if(ngroups>1)
   	{
-  		id.g.l[[g]]          <- rbind(id.g.l[[g]]         , matrix(NA, ggap, ncol(id.g.l[[g]]   )) )
-  		y.g.l[[g]]           <- rbind(y.g.l[[g]]          , matrix(NA, ggap, ncol(y.g.l[[g]]    )) )
-  		times.g.l[[g]]       <- rbind(times.g.l[[g]]      , matrix(NA, ggap, ncol(times.g.l[[g]])) )
-  		group.g.l[[g]]       <- rbind(group.g.l[[g]]      , matrix(NA, ggap, 1) )
+  	  dat.id    <- data.frame(id.g.l[[g]])
+  	  dat.y     <- data.frame(y.g.l[[g]])     
+  	  dat.times <- data.frame(times.g.l[[g]]) 
+  	  dat.group <- data.frame(group.g.l[[g]]) 
+  	  
+  	  na.id    <- data.frame(matrix(NA, ggap, ncol(id.g.l[[g]]   )))
+  	  na.y     <- data.frame(matrix(NA, ggap, ncol(y.g.l[[g]]    )))
+  	  na.times <- data.frame(matrix(NA, ggap, ncol(times.g.l[[g]])))
+  	  na.group <- data.frame(matrix(NA, ggap, 1))     
+
+  	  names(na.id   ) <- names(dat.id   )
+  	  names(na.y    ) <- names(dat.y    )
+  	  names(na.times) <- names(dat.times)
+  	  names(na.group) <- names(dat.group)
+
+  	  id.g.l[[g]]          <- rbind(do.call(data.frame, dat.id), na.id)#rbind(dat.id    , na.id   )
+  		y.g.l[[g]]           <- rbind(dat.y     , na.y    )
+  		times.g.l[[g]]       <- rbind(dat.times , na.times)
+  		group.g.l[[g]]       <- rbind(dat.group , na.group)
   		if(!is.null(lc$events))
   		{
   			events.g.l[[g]]      <- rbind(events.g.l[[g]]     , matrix(NA, ggap, ncol(events.g.l[[g]]     )))
@@ -777,7 +811,9 @@ longCatPlot <- function(lc, xlab="Days",
   if(groupBuffer==0 &  is.null(lc$group)) title(ylab=ylab, mgp=c(0.25,1,0))  
   
   # add axes
-  if(!is.null(lc$tLabels) ) axis( 1, at = unique(lc$times), 
+  tat <- unique(lc$times)
+  tat <- tat[1:(length(tat)-1)]
+  if(!is.null(lc$tLabels) ) axis( 1, at = tat, 
                                  labels=lc$tLabels, las=xlas, cex.axis=xcex )
   if( is.null(lc$tLabels) ) axis( 1, at = NULL )
   
@@ -785,8 +821,8 @@ longCatPlot <- function(lc, xlab="Days",
   for(r in nrow(lc$y.sorted):1) # loop over cases
   {
     # select plotting y for the r^th case
-    pdat  <- lc$y.sorted[r,]
-    txx   <- lc$times.sorted[r,]
+    pdat  <- as.numeric(lc$y.sorted[r,])
+    txx   <- as.numeric(lc$times.sorted[r,])
     tempy <- rep(r,2)
     # loop over observations
     for(j in 1:length(pdat)) 
@@ -796,7 +832,7 @@ longCatPlot <- function(lc, xlab="Days",
       {
         tempx <- c(txx[j], txx[j+1])
         # horizontal line plot
-        lines(tempx, tempy, lwd=lwd, col=cols[ pdat[j] ] )
+        lines(tempx, tempy, lwd=lwd, col=cols[ as.numeric(pdat[j]) ] )
       }
     }
   }
@@ -833,15 +869,17 @@ longCatPlot <- function(lc, xlab="Days",
   # if there is grouping add group labels
   if(!is.null(lc$group))
   {
-    if( var(lc$group, na.rm=TRUE)!=0 )
+    if( var(as.numeric(lc$group), na.rm=TRUE)!=0 )
     {
-      g <- data.frame(g=as.numeric(lc$group.sorted), 
-                      gn=as.numeric(1:length(lc$group.sorted)))
-      gag <- aggregate(gn ~ g, g, mean, na.rm=T)
-      u <- unique(as.numeric(lc$group.sorted))
-      for(i in 1:length(u))
+      #g <- data.frame(g=lc$group.sorted, 
+      #                gn=1:length(lc$group.sorted))
+      g   <- as.numeric(unlist( lc$group.sorted ))
+      gn  <- 1:length(g)
+      gag <- aggregate(gn, list(group=g), mean, na.rm=T)
+      u.g <- unique(g[!is.na(g)])
+      for(i in 1:length(u.g))
       {
-        text(tx[1], gag$gn[i], labels = lc$groupLabels[i], srt=groupRotation, cex=gcex)
+        text(tx[1], gag$x[i], labels = lc$groupLabels[i], srt=groupRotation, cex=gcex)
       }
     }
   }

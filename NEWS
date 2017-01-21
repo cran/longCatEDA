@@ -1,3 +1,9 @@
+Changes in Version 0.30
+	* Updated handling of factor 'y' and 'group' inputs, with autoextraction of levels for 'Labels' and 'groupLabels' and conversion of 'y' and 'group' to numeric
+	* Corrections to x-axis tick labeling 
+	* Added multivariate times series data examples in the longCatPlot() documentation
+	* Added an example for implementing the horizontal lineplot in ggplot2 after sorting data using sorter(), see example(sorter)
+
 Changes in Version 0.21
 	* Added function alignTime() to create new 'times' matrices aligned at the n^th state in 'y' or the n^th event in 'events'
 	* sorter() rewritten for more efficient handling of grouped data

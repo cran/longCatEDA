@@ -9,7 +9,7 @@ longCat(y, times = NULL, Labels = NULL, tLabels = NULL, id = NULL,
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{y}{a data matrix or data frame of states in wide (as opposed to long) format with cases in rows and repeated observations in columns. At most, \code{y} can have 9 unique non-missing values.}
+  \item{y}{a data matrix or data frame of numeric states in wide (as opposed to long) format with cases in rows and repeated observations in columns. It is reccomended that \code{y} have 9 or fewer unique non-missing levels. Labels for the numeric states are given in \code{Labels}.}
   \item{times}{The \code{times} object designates start and stop points for each plotted interval. It is either a vector with length being the number of columns in \code{y} plus one, \code{NULL}, or a matrix with the same number of rows as \code{y} and one more column than in \code{y}. Negative values are allowed such as would be the case if time is centered at an intervention point, negative values represent times prior to the intervention, and positive times represent times after the intervention. 
   
   If \code{times} is a vector, it is assumed that cases in each row in \code{y} is observed at the same time points for the same durations. For example, if \code{times=c(0,6,12,13)}, this indicates a design were cases were observed at 0, 6, and 12 time units. When applying \code{longCatPlot}, the first observation for each case with extend from 0 to 6, the second observation for each case will extend from 6 to 12, and the third observation will extend from 12 to 13. The value selected at the end may be arbitrary as cases may not have been followed for any additional time. A value may be selected to maintain consistent interval sizes. Continuing the example, one could use \code{times=c(0,6,12,18)} instead of \code{times=c(0,6,12,13)} even though cases weren't actually followed past month 12. Unequal spacing is allow, for example \code{times=c(0,3,12,18)}. In this case, participants are observed for at baseline, 3 time units, and 12 time units, where the final status is either intentionally or arbitrarily extended 18-12=6 time units at the right end of the plot. Missing values are not allowed. 
@@ -42,7 +42,7 @@ The \code{times} and \code{event.times} matrices can be realigned using the \cod
   \item{tLabels }{the \code{tLabels} vector as described above}
   \item{factors }{a vector containing the unique values in \code{y}. Not that if the unique values in \code{y} were not sequential integers starting at 1, both \code{factors} and \code{y} are recoded such that they contain sequential integers starting at 1.}
   \item{IndTime }{a logical indicator of whether \code{times} is a matrix of the same dimension as \code{y}. If \code{TRUE}, \code{\link{longCatPlot}} treats these times as individually varying times of observation.}
-  \item{nfactors}{the number of unique values in \code{y}, and is the same as the length of the \code{factors} vector. \code{nfactors} is determined by \code{longCat}, but cannot exceed 9. If users have data with more than 9 categories, continuous plotting methods are recommended (e.g., try \code{\link{longContPlot}}.)}
+  \item{nfactors}{the number of unique values in \code{y}, and is the same as the length of the \code{factors} vector. \code{nfactors} is determined by \code{longCat}. If users have data with more than 9 categories, continuous plotting methods are recommended via warning (e.g., try \code{\link{longContPlot}}.)}
   \item{sorted }{a logical indicator of whether \code{y} has been sorted by the \code{\link{sorter}} function. If \code{TRUE}, \code{y.sorted} (and \code{times.sorted} if \code{IndTime} is \code{TRUE}) will not be \code{NULL}. }
   \item{ascending }{logical indicator. If \code{sorted} is \code{TRUE}, this will indicate whether sorting was done ascending. (default is \code{NULL} unless \code{\link{sorter}} has been applied to the \code{longCat} object).}
   \item{group }{a vector of the same length as the number of rows in \code{y} (default is \code{NULL} unless \code{\link{sorter}} has been applied to the \code{longCat} object along with a grouping variable).}
@@ -72,7 +72,7 @@ summary(f2lc)
 par(mfrow=c(1,2), bg='cornsilk3')
 longContPlot(example2cat, times, ylim=c(1,5), 
   main='Growth Curves', ylab='', xlab='Days')
-longCatPlot(f2lc, lwd=4, main='Horizontal Line Plot', colScheme='heat')
+longCatPlot(f2lc, lwd=4, main='Horizontal Line Plot', colScheme='heat', legendBuffer=.2)
 par(mfrow=c(1,1), bg='transparent')
 
 # illustrate individually varying times of observation 
@@ -103,7 +103,7 @@ par(mfrow=c(1,1), bg='cornsilk3', mar=c(5.1, 4.1, 4.1, 12.1), xpd=TRUE)
 cols <- longCatPlot(lc, legendBuffer=0, groupBuffer=0, 
                     main='Superimpose Events Over States')
 legend(15.5, 100, legend=lc$Labels, lty=1, col=cols, lwd=2)
-legend(15.5, 50, legend=lc$eventLabels, pch=1:length(lc$eventLabels))
+legend(15.5, 40, legend=lc$eventLabels, pch=1:length(lc$eventLabels))
 par(bg='transparent', mar = c(5, 4, 4, 2) + 0.1, xpd=FALSE)
 
 \dontrun{

@@ -1,5 +1,5 @@
 \name{longCat-class}
-\Rdversion{0.21}
+\Rdversion{0.30}
 \docType{class}
 \alias{longCat-class}
 
