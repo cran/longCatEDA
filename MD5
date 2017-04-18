@@ -1,7 +1,7 @@
-ff951cf7b18223bceaab1dca9fd4f7b9 *DESCRIPTION
+d09c7aefbbd3c59810f8f786e3360178 *DESCRIPTION
 62b82384433f20e8b27e6fb734a3617a *NAMESPACE
-9702dd6f177581a85d2c3ccab6bf73bd *NEWS
-812e595927ceac9a26a45aefd5dbe3fe *R/longCatEDA_0.30.r
+f9ed00d89f8f07e8939d0b1fd9e81989 *NEWS
+1fe17ac973af44297b4ae789d4869612 *R/longCatEDA_0.31.r
 e4e2cd9240ed8ba72477bb58d9cfa4d5 *data/longCatExamples.RData
 6c39804a7c79a32fc060995508c7f61a *man/alignTime.Rd
 85c7546e9dd07bc6aa7246fd31fd1e2c *man/clean.events.Rd
@@ -10,9 +10,9 @@ c49a8e6ad00b4644c3dd58ebfb1fbcb3 *man/colChoose.Rd
 03492fcc0cfcca3881fe15f0421244d9 *man/example2cont.Rd
 64dffbbeb2df067fbcf71795653489f0 *man/example3.Rd
 980e3a46e79a4f594bd9d33b87d71f51 *man/levelCheck.Rd
-5f4fc79a0f595a1b958705c13c27035f *man/longCat-class.Rd
+de5409c5b977eca466593abf02b581dd *man/longCat-class.Rd
 c1f9b37f9feca63790be5ac7e6f7092b *man/longCat.Rd
-46799e6387c4a7023ae700a3bc7b5ab3 *man/longCatEDA-package.Rd
+9d085d298fa87fbbc1e995acc010244c *man/longCatEDA-package.Rd
 4ba32ec21ab72b284fbb6733e9d28368 *man/longCatPlot.Rd
 453246f12a164dee33805e530c689a8b *man/longContPlot.Rd
 d0412946b7b1d6c5c7eb6da0974e1993 *man/lunique.Rd

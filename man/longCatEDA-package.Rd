@@ -12,7 +12,7 @@ Package to implement horizontal line plots for categorical (ordinal or nominal) 
 \tabular{ll}{
 Package: \tab longCatEDA\cr
 Type: \tab Package\cr
-Version: \tab 0.30\cr
+Version: \tab 0.31\cr
 Date: \tab 29Oct2016\cr
 License: \tab GNU GPL\cr
 Depends: \tab methods\cr

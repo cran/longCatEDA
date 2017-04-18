@@ -252,10 +252,15 @@ longCat <- function(y, times=NULL, Labels=NULL, tLabels=NULL,
     {
       if(is.null(IndTime)) IndTime <- TRUE 
       times <- as.matrix(times)
-      if(!all( apply(times, 1, function(x) all(x==cummax(x))) ))
-      {
-        stop('times must be monotonically increasing')
-      }
+      cummax2 <- function(x) 
+	  {
+	    x <- x[!is.na(x)]
+	    all(x==cummax(x))
+	  }
+	  if(!all( apply(times, 1, cummax2) ))
+	  {
+	    stop('times must be monotonically increasing')
+	  }
     }
     if(!dimCheck)
     {

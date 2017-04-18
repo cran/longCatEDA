@@ -1,3 +1,6 @@
+Changes in Version 0.31
+	* checks for monotonic increasing 'times'
+
 Changes in Version 0.30
 	* Updated handling of factor 'y' and 'group' inputs, with autoextraction of levels for 'Labels' and 'groupLabels' and conversion of 'y' and 'group' to numeric
 	* Corrections to x-axis tick labeling 
